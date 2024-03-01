@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+
+  <!-- Don't use this in production: -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <title>Document</title>
+</head>
+
+<body>
+<div id="root">
+
+  </div>
+<script type="text/babel">
+  const SYMBOL_X = 'X';
+  const SYMBOL_O = 'O';
+
+  function App() {
+    const [currentStep, setCurrentStep] = React.useState(SYMBOL_O);
+    const getSymbolClassName = (symbol) => {
+      if (symbol === SYMBOL_O) return 'symbol--o'
+      if (symbol === SYMBOL_X) return 'symbol--x'
+    }
+
+    const computeWinner = (cells) => {
+      const lines = [
+              [0, 1, 2],
+              [3, 4, 5],
+              [6, 7, 8],
+              [0, 3, 6],
+              [1, 4, 7],
+              [2, 5, 8],
+              [0, 4, 8],
+              [2, 4, 6]
+      ]
+
+      for (let i = 0; i < lines.length; i++) {
+        const [a, b, c] = lines[i]
+        if (
+                cells[a] &&
+                cells[a] === cells[b] &&
+                cells[a] === cells[c]
+        ) {
+          return [a, b, c]
+        }
+      }
+    }
+
+    const [cells, setCells] = React.useState([null, null, null,
+      null, null, null,
+      null, null, null]);
+    const [winnerSequence, setWinnerSequence] = React.useState()
+    const [stepCount, setStepCount] = React.useState(0)
+
+    const renderSymbol = (symbol) => <span className={`symbol ${getSymbolClassName(symbol)}`}>{symbol}</span>
+    const handelCellClick = (index) => {
+      if (cells[index] || winnerSequence) return;
+      setStepCount(stepCount + 1)
+
+      const cellsCopy = cells.slice()
+      cellsCopy[index] = currentStep;
+      const winner = computeWinner(cellsCopy)
+
+      setCells(cellsCopy)
+      setWinnerSequence(winner)
+      setCurrentStep(currentStep === SYMBOL_O ? SYMBOL_X : SYMBOL_O)
+    }
+
+    const handleClearFieldClick = () => {
+      setCells(cells.slice().map(c => c = null))
+      setWinnerSequence()
+      setStepCount(0)
+    }
+
+    const winnerSymbol = winnerSequence ? cells [winnerSequence[0]] : undefined
+
+    return (
+            <div className="game">
+              <div className="game-info">
+                <span>
+                  {stepCount === 9 ? 'Ничья\n' : ''}
+                </span>
+                {winnerSequence ? 'Победитель' : 'Ход'} : {renderSymbol(winnerSymbol ?? currentStep)}
+              </div>
+              <div className="game-field">
+                {cells.map((symbol, index) => {
+                  const isWinner = winnerSequence?.includes(index);
+                  return <button
+                          key={index}
+                          className={`cell ${isWinner ? 'cell--win' : ''}`}
+                          onClick={() => handelCellClick(index)}
+                  >
+                    {renderSymbol(symbol)}
+                  </button>
+                })}
+              </div>
+              <div className="game-panel"
+                   onClick={handleClearFieldClick}
+              >
+                <button>
+                  Очистить поле
+                </button>
+              </div>
+            </div>
+    )
+  }
+
+
+  const root = ReactDOM.createRoot(document.getElementById('root'));
+  root.render(<App/>)
+
+</script>
+<style>
+    html {
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .game {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 150px;
+      margin: 100px auto;
+      padding: 20px;
+      border: 1px solid black;
+    }
+
+    .game-info {
+      margin-bottom: 10px;
+    }
+
+    .game-field {
+      display: grid;
+      grid-template-columns: repeat(3, 30px);
+      grid-template-rows: repeat(3, 30px);
+      padding: 1px 0 0 1px;
+    }
+
+    .game-panel {
+      margin-top: 10px;
+    }
+
+    .cell {
+      border: 1px solid grey;
+      margin: -1px 0 0 -1px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: transparent;
+    }
+
+    .cell--win {
+      background: rgba(255, 0, 0, 0.1);
+    }
+
+    .symbol {
+      font-size: 20px;
+      line-height: 24px;
+    }
+
+    .symbol--x {
+      color: red;
+    }
+
+    .symbol--o {
+      color: green;
+    }
+  </style>
+</body>
+
+</html>
