@@ -1,0 +1,62 @@
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width initial-scale=1.0">
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <title>Document</title>
+</head>
+
+<body>
+<div id="root"></div>
+<script type="text/babel">
+
+    function computing(initialState) {
+        console.log("computing");
+        return {counter: initialState + 10}
+    }
+    function App() {
+        const [isComponent, setIsComponent] = React.useState(false);
+        const [counter, setCounter] = React.useState(() => computing(20));
+
+        function increment() {
+            setIsComponent(s => !s);
+            console.log(isComponent);
+            setCounter((lastCounter) => {
+                return {
+                    ...lastCounter,
+                    counter: lastCounter.counter + 1
+                };
+            });
+            console.log('after set counter');
+        }
+
+        function decrement() {
+            increment();
+            increment();
+            increment();
+        }
+
+        console.log('render', counter);
+
+        return (
+            <div>
+                <div>Counter: {counter.counter}</div>
+                <button onClick={increment}>Increment</button>
+                <button onClick={decrement}>Decrement</button>
+            </div>
+        );
+    }
+
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App type="Input"/>);
+</script>
+<style>
+    #root {
+        font-family: Arial, Helvetica, sans-serif;
+    }
+</style>
+</body>
