@@ -34,3 +34,5 @@ export function GameInfo({ className }) {
     </div>
   );
 }
+
+function PlayerInfo({ pl }) {}
