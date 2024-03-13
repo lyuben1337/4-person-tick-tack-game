@@ -11,7 +11,7 @@ export function Header() {
         Play
       </UiButton>
       <button className="ml-auto gap-1 flex items-center transition-colors text-teal-600 hover:text-teal-500">
-        <Profile />
+        <Profile name="lyuben1337" rating="2000" />
         <ArrowDownIcon />
       </button>
     </header>
