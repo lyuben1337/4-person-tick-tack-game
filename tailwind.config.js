@@ -6,8 +6,11 @@ module.exports = {
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      lineHeight: {
+        tight: "1.2",
+      },
+    },
   },
   plugins: [],
-}
-
+};
