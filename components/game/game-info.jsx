@@ -2,6 +2,7 @@ import clsx from "clsx";
 import { Profile } from "../profile";
 import { GameSymbol } from "./game-symbol";
 import { GAME_SYMBOLS } from "./constants";
+import { useEffect, useState } from "react";
 
 const players = [
   {
@@ -34,7 +35,7 @@ const players = [
   },
 ];
 
-export function GameInfo({ className, playersCount }) {
+export function GameInfo({ className, playersCount, currentMove, isWinner }) {
   return (
     <div
       className={clsx(
@@ -43,13 +44,53 @@ export function GameInfo({ className, playersCount }) {
       )}
     >
       {players.slice(0, playersCount).map((player, index) => (
-        <PlayerInfo playerInfo={player} key={index} isRight={index % 2 === 1} />
+        <PlayerInfo
+          playerInfo={player}
+          isPlayerActive={player.symbol === currentMove && !isWinner}
+          key={index}
+          isRight={index % 2 === 1}
+        />
       ))}
     </div>
   );
 }
 
-function PlayerInfo({ playerInfo, isRight }) {
+function PlayerInfo({ playerInfo, isRight, isPlayerActive, onTimeOver }) {
+  function getFormattedTime() {
+    const minutes = Math.floor(time / 60);
+    const seconds = time % 60;
+
+    return (
+      minutes.toString().padStart(2, "0") +
+      ":" +
+      seconds.toString().padStart(2, "0")
+    );
+  }
+
+  const [time, setTime] = useState(60);
+  const formattedTime = getFormattedTime();
+  const isTimeEnding = time < 10;
+
+  useEffect(() => {
+    if (isPlayerActive) {
+      setTime(60);
+
+      const interval = setInterval(() => {
+        setTime((t) => Math.max(t - 1, 0));
+      }, 1000);
+
+      return () => {
+        clearInterval(interval);
+      };
+    }
+  }, [isPlayerActive]);
+
+  useEffect(() => {
+    if (time === 0) {
+      onTimeOver();
+    }
+  }, [time]);
+
   return (
     <div className="flex gap-3 items-center">
       <div className={clsx("relative", isRight && "order-3")}>
@@ -65,11 +106,13 @@ function PlayerInfo({ playerInfo, isRight }) {
       </div>
       <div
         className={clsx(
-          "text-orange-600 text-lg font-semibold",
+          "text-slate-900 text-opacity-50 text-lg font-semibold w-[60px]",
           isRight && "order-2",
+          isTimeEnding && "text-orange-600",
+          isPlayerActive && "text-opacity-100",
         )}
       >
-        00:08
+        {formattedTime}
       </div>
       <div className={clsx("h-6 w-px bg-slate-200", isRight && "order-1")} />
     </div>

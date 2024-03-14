@@ -1,19 +1,17 @@
 import { GAME_SYMBOLS } from "./constants";
 import { useState } from "react";
+import { computeWinner, getNextMove } from "./model";
 
 export function UseGameState(playersCount) {
-  const [{ cells, currentMove }, setGameState] = useState(() => ({
-    cells: new Array(19 * 19).fill(null),
-    currentMove: GAME_SYMBOLS.CROSS,
-  }));
+  const [{ cells, currentMove, playersTimeOver }, setGameState] = useState(
+    () => ({
+      cells: new Array(19 * 19).fill(null),
+      currentMove: GAME_SYMBOLS.CROSS,
+      playersTimeOver: [],
+    }),
+  );
 
-  function getNextMove(currentMove, playersCount) {
-    if (playersCount === 2) {
-      return (currentMove % 2) + 1;
-    }
-    return (currentMove % Object.keys(GAME_SYMBOLS).length) + 1;
-  }
-
+  const winnerSequence = computeWinner(cells);
   const nextMove = getNextMove(currentMove, playersCount);
 
   const handleCellClick = (index) => {
@@ -32,10 +30,21 @@ export function UseGameState(playersCount) {
     });
   };
 
+  const handlePlayerTimeOver = (symbol) => {
+    setGameState((lastGameState) => {
+      return {
+        ...lastGameState,
+        playersTimeOver: [...lastGameState.playersTimeOver, symbol],
+        currentMove: getNextMove(lastGameState.currentMove, playersCount),
+      };
+    });
+  };
+
   return {
     cells,
     currentMove,
     nextMove,
     handleCellClick,
+    winnerSequence,
   };
 }
