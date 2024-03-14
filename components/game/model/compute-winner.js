@@ -1,6 +1,4 @@
-import { GAME_SYMBOLS, MOVE_ORDER } from "./constants";
-
-export function computeWinner(cells, sequenceSize = 3, fieldSize = 19) {
+export function computeWinner(cells, sequenceSize = 5, fieldSize = 19) {
   const gap = Math.floor(sequenceSize / 2);
   function getSequences(i) {
     const sequences = [[], [], [], []];
@@ -33,15 +31,7 @@ export function computeWinner(cells, sequenceSize = 3, fieldSize = 19) {
     return result;
   }
 
-  //const startIndex = gap + gap * fieldSize;
-  //const endIndex = cells.length - (gap + gap * fieldSize);
-
-  for (
-    let i = 0;
-    i < cells.length;
-    //(i + 1) % fieldSize === fieldSize - gap ? (i = i + 2 * gap + 1) :
-    i++
-  ) {
+  for (let i = 0; i < cells.length; i++) {
     if (!cells[i]) continue;
     const sequences = getSequences(i);
     const winnerSequence = sequences.find((seq) => compareElements(seq));
@@ -50,13 +40,4 @@ export function computeWinner(cells, sequenceSize = 3, fieldSize = 19) {
   }
 
   return undefined;
-}
-
-export function getNextMove(currentMove, playersCount, playersTimeOver) {
-  const moveOrder = MOVE_ORDER.slice(0, playersCount).filter(
-    (symbol) => !playersTimeOver.includes(symbol),
-  );
-  const nextMoveIndex = moveOrder.indexOf(currentMove) + 1;
-
-  return moveOrder[nextMoveIndex] ?? moveOrder[0];
 }
