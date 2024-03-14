@@ -1,39 +1,7 @@
 import clsx from "clsx";
 import { Profile } from "../profile";
 import { GameSymbol } from "./game-symbol";
-import { GAME_SYMBOLS } from "./constants";
 import { useEffect, useState } from "react";
-
-const players = [
-  {
-    id: 1,
-    name: "lyuben1337",
-    rating: 2000,
-    avatar: null,
-    symbol: GAME_SYMBOLS.CROSS,
-  },
-  {
-    id: 2,
-    name: "WYMIB",
-    rating: 1500,
-    avatar: null,
-    symbol: GAME_SYMBOLS.ZERO,
-  },
-  {
-    id: 3,
-    name: "Шальной Тимон",
-    rating: 2500,
-    avatar: null,
-    symbol: GAME_SYMBOLS.TRIANGLE,
-  },
-  {
-    id: 4,
-    name: "danilgnida",
-    rating: 1900,
-    avatar: null,
-    symbol: GAME_SYMBOLS.SQUARE,
-  },
-];
 
 export function GameInfo({
   className,
