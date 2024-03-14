@@ -5,24 +5,40 @@ import { GameInfo } from "./ui/game-info";
 import { PLAYERS } from "./constants";
 import { PlayerInfo } from "./ui/player-info";
 import { GameMoveInfo } from "./ui/game-move-info";
-import { useGameState } from "./model/use-game-state";
 import { GameCell } from "./ui/game-cell";
 import { GameOverModal } from "./ui/game-over-modal";
+import {
+  GAME_STATE_ACTIONS,
+  gameStateReducer,
+  initGameState,
+} from "./model/game-state-reducer";
+import { computeWinner } from "./model/compute-winner";
+import { getNextMove } from "./model/get-next-move";
+import { useReducer } from "react";
+import { computeWinnerSymbol } from "./model/compute-winner-symbol";
 
-const PLAYERS_COUNT = 2;
+const PLAYERS_COUNT = 4;
+const DEFAULT_TIMER = 60 * 1000; // ms
 
 export function Game() {
-  const {
-    cells,
-    currentMove,
-    nextMove,
-    handleCellClick,
+  const [gameState, dispatch] = useReducer(
+    gameStateReducer,
+    { playersCount: PLAYERS_COUNT, defaultTimer: DEFAULT_TIMER },
+    initGameState,
+  );
+
+  const winnerSequence = computeWinner(gameState);
+
+  const nextMove = getNextMove(gameState);
+
+  const winnerSymbol = computeWinnerSymbol(gameState, {
     winnerSequence,
-    handlePlayerTimeOver,
-    winnerSymbol,
-  } = useGameState(PLAYERS_COUNT);
+    nextMove,
+  });
 
   const winnerPlayer = PLAYERS.find((player) => player.symbol === winnerSymbol);
+
+  const { cells, currentMove, timers } = gameState;
 
   return (
     <>
@@ -42,7 +58,7 @@ export function Game() {
             avatarSrc={player.avatar}
             name={player.name}
             rating={player.rating}
-            time={60}
+            time={DEFAULT_TIMER}
             symbol={player.symbol}
             isRight={index % 2 === 1}
           />
@@ -55,7 +71,12 @@ export function Game() {
             key={index}
             isWinner={!!winnerSequence?.includes(index)}
             symbol={cell}
-            onClick={() => handleCellClick(index)}
+            onClick={() =>
+              dispatch({
+                type: GAME_STATE_ACTIONS.CELL_CLICK,
+                index,
+              })
+            }
             disabled={!!winnerSymbol}
           />
         ))}

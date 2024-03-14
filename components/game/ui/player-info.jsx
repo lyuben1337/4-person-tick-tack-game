@@ -2,9 +2,11 @@ import clsx from "clsx";
 import { GameSymbol } from "./game-symbol";
 import Image from "next/image";
 
-function getFormattedTime(timeSeconds) {
-  const minutes = Math.floor(timeSeconds / 60);
-  const seconds = timeSeconds % 60;
+function getFormattedTime(timeMs) {
+  const time = Math.ceil(timeMs / 1000);
+
+  const minutes = Math.floor(time / 60);
+  const seconds = time % 60;
 
   return (
     minutes.toString().padStart(2, "0") +
