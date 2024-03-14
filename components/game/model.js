@@ -1,4 +1,4 @@
-import { GAME_SYMBOLS } from "./constants";
+import { GAME_SYMBOLS, MOVE_ORDER } from "./constants";
 
 export function computeWinner(cells, sequenceSize = 3, fieldSize = 19) {
   const gap = Math.floor(sequenceSize / 2);
@@ -52,9 +52,11 @@ export function computeWinner(cells, sequenceSize = 3, fieldSize = 19) {
   return undefined;
 }
 
-export function getNextMove(currentMove, playersCount) {
-  if (playersCount === 2) {
-    return (currentMove % 2) + 1;
-  }
-  return (currentMove % Object.keys(GAME_SYMBOLS).length) + 1;
+export function getNextMove(currentMove, playersCount, playersTimeOver) {
+  const moveOrder = MOVE_ORDER.slice(0, playersCount).filter(
+    (symbol) => !playersTimeOver.includes(symbol),
+  );
+  const nextMoveIndex = moveOrder.indexOf(currentMove) + 1;
+
+  return moveOrder[nextMoveIndex] ?? moveOrder[0];
 }

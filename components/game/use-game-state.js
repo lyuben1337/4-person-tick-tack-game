@@ -12,7 +12,10 @@ export function UseGameState(playersCount) {
   );
 
   const winnerSequence = computeWinner(cells);
-  const nextMove = getNextMove(currentMove, playersCount);
+  const nextMove = getNextMove(currentMove, playersCount, playersTimeOver);
+
+  const winnerSymbol =
+    nextMove === currentMove ? currentMove : cells[winnerSequence?.[0]];
 
   const handleCellClick = (index) => {
     setGameState((lastGameState) => {
@@ -22,7 +25,11 @@ export function UseGameState(playersCount) {
 
       return {
         ...lastGameState,
-        currentMove: getNextMove(lastGameState.currentMove, playersCount),
+        currentMove: getNextMove(
+          lastGameState.currentMove,
+          playersCount,
+          playersTimeOver,
+        ),
         cells: lastGameState.cells.map((cell, i) =>
           i === index ? lastGameState.currentMove : cell,
         ),
@@ -35,7 +42,11 @@ export function UseGameState(playersCount) {
       return {
         ...lastGameState,
         playersTimeOver: [...lastGameState.playersTimeOver, symbol],
-        currentMove: getNextMove(lastGameState.currentMove, playersCount),
+        currentMove: getNextMove(
+          lastGameState.currentMove,
+          playersCount,
+          playersTimeOver,
+        ),
       };
     });
   };
@@ -46,5 +57,7 @@ export function UseGameState(playersCount) {
     nextMove,
     handleCellClick,
     winnerSequence,
+    handlePlayerTimeOver,
+    winnerSymbol,
   };
 }

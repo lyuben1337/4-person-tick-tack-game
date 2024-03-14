@@ -9,6 +9,7 @@ export function GameField({
   nextMove,
   handleCellClick,
   winnerSequence,
+  winnerSymbol,
 }) {
   const actions = (
     <>
@@ -34,7 +35,7 @@ export function GameField({
             onClick={() => handleCellClick(index)}
             key={index}
             isWinner={winnerSequence?.includes(index)}
-            disabled={!!winnerSequence}
+            disabled={!!winnerSymbol}
           >
             {symbol && <GameSymbol symbol={symbol} className="w-5 h-5" />}
           </GameCell>

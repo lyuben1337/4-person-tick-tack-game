@@ -35,7 +35,13 @@ const players = [
   },
 ];
 
-export function GameInfo({ className, playersCount, currentMove, isWinner }) {
+export function GameInfo({
+  className,
+  playersCount,
+  currentMove,
+  isWinner,
+  onPlayerTimeOver,
+}) {
   return (
     <div
       className={clsx(
@@ -49,6 +55,7 @@ export function GameInfo({ className, playersCount, currentMove, isWinner }) {
           isPlayerActive={player.symbol === currentMove && !isWinner}
           key={index}
           isRight={index % 2 === 1}
+          onTimeOver={() => onPlayerTimeOver(player.symbol)}
         />
       ))}
     </div>
@@ -67,13 +74,13 @@ function PlayerInfo({ playerInfo, isRight, isPlayerActive, onTimeOver }) {
     );
   }
 
-  const [time, setTime] = useState(60);
+  const [time, setTime] = useState(10);
   const formattedTime = getFormattedTime();
   const isTimeEnding = time < 10;
 
   useEffect(() => {
     if (isPlayerActive) {
-      setTime(60);
+      setTime(10);
 
       const interval = setInterval(() => {
         setTime((t) => Math.max(t - 1, 0));
