@@ -1,18 +1,28 @@
 import clsx from "clsx";
 import { GameSymbol } from "./game-symbol";
 import Image from "next/image";
+import { useNow } from "../../lib/timers";
+
+const isTimeEnding = (time) => time < 10000;
 
 function getFormattedTime(timeMs) {
-  const time = Math.ceil(timeMs / 1000);
+  const time = new Date(timeMs);
 
-  const minutes = Math.floor(time / 60);
-  const seconds = time % 60;
+  const minutes = time.getMinutes();
+  const seconds = time.getSeconds();
 
-  return (
+  let formattedTime =
     minutes.toString().padStart(2, "0") +
     ":" +
-    seconds.toString().padStart(2, "0")
-  );
+    seconds.toString().padStart(2, "0");
+
+  if (isTimeEnding(timeMs)) {
+    formattedTime = formattedTime
+      .slice(1)
+      .concat(".", Math.floor(time.getMilliseconds() / 100).toString());
+  }
+
+  return formattedTime;
 }
 
 export function PlayerInfo({
@@ -22,10 +32,11 @@ export function PlayerInfo({
   rating,
   symbol,
   time,
-  isTimeEnding,
-  isPlayerActive,
+  timeStartAt,
 }) {
-  const formattedTime = getFormattedTime(time);
+  const now = useNow(100, timeStartAt);
+  const currentTime = Math.max(now ? time - (now - timeStartAt) : time, 0);
+  const formattedTime = getFormattedTime(currentTime);
 
   return (
     <div className="flex gap-3 items-center">
@@ -55,10 +66,10 @@ export function PlayerInfo({
       </div>
       <div
         className={clsx(
-          "text-slate-900 text-opacity-50 text-lg font-semibold w-[60px]",
+          "text-lg font-semibold w-[60px]",
           isRight && "order-2",
-          isTimeEnding && "text-orange-600",
-          isPlayerActive && "text-opacity-100",
+          !timeStartAt && "text-opacity-50",
+          currentTime > 10000 ? "text-slate-900" : "text-orange-600",
         )}
       >
         {formattedTime}
