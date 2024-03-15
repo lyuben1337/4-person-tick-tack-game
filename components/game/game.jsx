@@ -20,7 +20,7 @@ import { computePlayerTimer } from "./model/compute-player-timer";
 import { useInterval } from "../lib/timers";
 
 const PLAYERS_COUNT = 4;
-const DEFAULT_TIMER = 60 * 1000; // ms
+const DEFAULT_TIMER = 5 * 1000; // ms
 
 export function Game() {
   const [gameState, dispatch] = useReducer(
